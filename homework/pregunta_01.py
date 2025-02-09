@@ -71,3 +71,69 @@ def pregunta_01():
 
 
     """
+    from pathlib import Path
+    import pandas as pd
+    import os
+
+    train_dir=[
+                Path("files/input/input/train/negative"),
+                Path("files/input/input/train/positive"),
+                Path("files/input/input/train/neutral")
+                ]
+    
+    test_dir=[
+            Path("files/input/input/test/negative"),
+            Path("files/input/input/test/positive"),
+            Path("files/input/input/test/neutral")
+            ]
+    
+    output_dir = Path("files/output")
+    
+    train_data = []
+    test_data = []
+
+    for i in range(0,3):
+        for archive in train_dir[i].iterdir():
+            if archive.is_file():
+                with archive.open("r",encoding="utf-8") as f:
+                    content = f.read()
+                    if i == 0:
+                        result = [content,"negative"]
+                    elif i == 1:
+                        result = [content,"positive"]
+                    else:
+                        result = [content,"neutral"]
+                        
+                    train_data.append(result)
+
+    
+    for i in range(0,3):
+        for archive in test_dir[i].iterdir():
+            if archive.is_file():
+                with archive.open("r",encoding="utf-8") as f:
+                    content = f.read()
+                    if i == 0:
+                        result = [content,"negative"]
+                    elif i == 1:
+                        result = [content,"positive"]
+                    else:
+                        result = [content,"neutral"]
+                        
+                    test_data.append(result)
+      
+
+    columns = ["phrase","target"]
+
+    df_train= pd.DataFrame(train_data,columns=columns)
+    df_test= pd.DataFrame(test_data,columns=columns)
+
+
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    df_train.to_csv(os.path.join(output_dir, "train_dataset.csv"))
+    df_test.to_csv(os.path.join(output_dir, "test_dataset.csv"))
+
+
+
+pregunta_01()
